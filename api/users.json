@@ -1,4 +1,10 @@
 {
-    "patek_cz": "https://raw.githubusercontent.com/patekcz/Capetain/main/api/capes/0.png",
-    "D3spowNDeq": "https://raw.githubusercontent.com/patekcz/Capetain/main/api/capes/3.png"
+    "patek_cz": {
+        "cape": "https://raw.githubusercontent.com/patekcz/Capetain/main/api/capes/0.png",
+        "model": "alex_hat"
+    },
+    "D3spowNDeq": {
+        "cape": "https://raw.githubusercontent.com/patekcz/Capetain/main/api/capes/3.png",
+        "model": null
+    }
 }
