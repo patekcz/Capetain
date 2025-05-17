@@ -1,5 +1,6 @@
+
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/aab262fa-5ccc-4a92-9df3-f719369ae49d" alt="Capetain" width="100">
+  <img src="https://github.com/user-attachments/assets/288529cf-b921-4b81-b9ef-86f9a7ce2783" alt="Capetain" width="1000">
 </p>
 
 
@@ -24,5 +25,8 @@
 
 </div>
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/aab262fa-5ccc-4a92-9df3-f719369ae49d" alt="Capetain" width="100">
+</p>
 
-<p></p>
+
