@@ -1,0 +1,12 @@
+{
+  "name": "capetain-sync",
+  "version": "1.0.0",
+  "description": "Synchronizace cape textur pro Capetain projekt",
+  "main": "sync_capes.js",
+  "dependencies": {
+    "fs-extra": "^10.1.0",
+    "node-fetch": "^3.3.1"
+  },
+  "type": "module",
+  "private": true
+} 

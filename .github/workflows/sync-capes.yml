@@ -1,0 +1,37 @@
+name: Synchronize Capes
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # Spustí se každých 12 hodin
+  workflow_dispatch:        # Umožní manuální spuštění
+
+jobs:
+  sync-capes:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          
+      - name: Install dependencies
+        run: |
+          cd .github/scripts
+          npm install
+          
+      - name: Fetch and process capes
+        run: |
+          cd .github/scripts
+          node sync_capes.js
+          
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add api/capes/ api/users.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Automatic cape sync update"
+          git push 
