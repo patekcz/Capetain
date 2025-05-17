@@ -2,7 +2,7 @@ name: Synchronize Capes
 
 on:
   schedule:
-    - cron: '0 */12 * * *'  # Spustí se každých 12 hodin
+    - cron: '*/5 * * * *'  # Spustí se každých 5 minut
   workflow_dispatch:        # Umožní manuální spuštění
 
 jobs:
