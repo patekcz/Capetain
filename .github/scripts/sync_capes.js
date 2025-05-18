@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Konstanty
-const API_URL = "http://qverlix.serv.nu:3004/api";
+const API_URL = "http://qverlix.serv.nu:3002/api";
 const REPO_URL = "https://raw.githubusercontent.com/patekcz/Capetain/main/api/capes";
 const BASE_DIR = path.resolve(__dirname, '..', '..');
 const CAPES_DIR = path.join(BASE_DIR, 'api', 'capes');
