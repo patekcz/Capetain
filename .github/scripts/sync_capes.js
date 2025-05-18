@@ -74,6 +74,7 @@ async function main() {
   if (fs.existsSync(USERS_JSON_PATH)) {
     try {
       currentUsers = JSON.parse(fs.readFileSync(USERS_JSON_PATH, 'utf8'));
+      console.log(`Načteno ${Object.keys(currentUsers).length} existujících uživatelů z users.json`);
     } catch (e) {
       console.error(`Chyba při načítání users.json: ${e.message}`);
     }
@@ -83,12 +84,14 @@ async function main() {
   const userData = await fetchUserData();
   
   if (!userData || Object.keys(userData).length === 0) {
-    console.error("Nepodařilo se získat data z API. Ukončuji.");
+    console.error("Nepodařilo se získat data z API. Zachovávám existující data.");
+    // Pokud API není dostupné, ukončíme proces, ale zachováme existující data
+    console.log("Synchronizace ukončena - zachovány existující data.");
     return;
   }
   
-  // Aktualizace users.json
-  const newUsers = {};
+  // Aktualizace users.json - zachováme stávající data jako základ
+  const newUsers = { ...currentUsers };
   
   // Zpracování uživatelů postupně, jeden po druhém
   for (const [username, info] of Object.entries(userData)) {
@@ -108,21 +111,48 @@ async function main() {
     const capeTargetPath = path.join(capeType, `${capeId}.png`);
     const capeUrl = `${REPO_URL}/${capeType}/${capeId}.png`;
     
-    // Stáhnutí cape
-    const capeContent = await downloadCape(capeId);
-    if (capeContent) {
-      // Zajištění existence adresáře
-      const targetDir = path.join(CAPES_DIR, capeType);
-      fs.ensureDirSync(targetDir);
+    // Cílový soubor pro cape texturu
+    const targetDir = path.join(CAPES_DIR, capeType);
+    fs.ensureDirSync(targetDir);
+    const targetPath = path.join(targetDir, `${capeId}.png`);
+    
+    // Kontrola, zda již cape textura existuje
+    const capeExists = fs.existsSync(targetPath);
+    
+    // Stáhneme pouze pokud cape ještě neexistuje nebo chceme aktualizovat
+    if (!capeExists) {
+      console.log(`Stahuji cape pro uživatele ${username} (ID: ${capeId})`);
+      const capeContent = await downloadCape(capeId);
       
-      // Uložení cape do správného adresáře
-      const targetPath = path.join(targetDir, `${capeId}.png`);
-      fs.writeFileSync(targetPath, capeContent);
-      
-      // Přidání do slovníku
-      newUsers[username] = capeUrl;
+      if (capeContent) {
+        // Uložení cape do správného adresáře
+        fs.writeFileSync(targetPath, capeContent);
+        console.log(`Cape pro uživatele ${username} úspěšně uložena`);
+      } else {
+        console.error(`Nepodařilo se stáhnout cape pro uživatele ${username}`);
+        // Pokud cape nejde stáhnout a máme již existující URL, zachováme ho
+        if (currentUsers[username]) {
+          console.log(`Zachovávám existující záznam pro uživatele ${username}`);
+          newUsers[username] = currentUsers[username];
+          continue;
+        }
+      }
+    } else {
+      console.log(`Cape pro uživatele ${username} již existuje, přeskakuji stahování`);
     }
+    
+    // Přidání do slovníku - vždy aktualizujeme URL
+    newUsers[username] = capeUrl;
   }
+  
+  // Logování změn
+  const addedUsers = Object.keys(newUsers).filter(user => !currentUsers[user]);
+  const updatedUsers = Object.keys(newUsers).filter(user => currentUsers[user] && currentUsers[user] !== newUsers[user]);
+  const unchangedUsers = Object.keys(newUsers).filter(user => currentUsers[user] && currentUsers[user] === newUsers[user]);
+  
+  console.log(`Přidáno nových uživatelů: ${addedUsers.length}`);
+  console.log(`Aktualizováno uživatelů: ${updatedUsers.length}`);
+  console.log(`Nezměněno uživatelů: ${unchangedUsers.length}`);
   
   // Uložení aktualizovaného users.json
   fs.writeFileSync(USERS_JSON_PATH, JSON.stringify(newUsers, null, 4));
